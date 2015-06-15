@@ -4,11 +4,11 @@ import std.stdio;
 import std.getopt;
 import std.parallelism;
 
-void check(string host) {
+void check(string host, ushort begin = 1, ushort end = 1024) {
     bool[1024] results;
     auto pool = new TaskPool(32); 
 
-    foreach (ushort port; pool.parallel(iota!(ushort, ushort)(1u, 1024u))) {
+    foreach (ushort port; pool.parallel(iota!(ushort, ushort)(begin, end))) {
         auto socket = new TcpSocket;
 
         socket.setOption(SocketOptionLevel.SOCKET, SocketOption.SNDTIMEO, dur!"msecs"(500));
@@ -69,8 +69,8 @@ void listenPort(string host, ushort port) {
     }
 }
 
-void listen(string host) {
-    foreach (ushort port; iota!(ushort, ushort)(1u, 1024u)) {
+void listen(string host, ushort begin = 1, ushort end = 1024) {
+    foreach (ushort port; iota!(ushort, ushort)(begin, end)) {
         task!listenPort(host, port)
             .executeInNewThread();
     }
@@ -80,12 +80,14 @@ void main(string[] args)
 {
     bool isServer = false;
     auto host = "0.0.0.0";
+    ushort begin = 1;
+    ushort end = 1024;
 
-    args.getopt("server|s", &isServer, "host|h", &host);
+    args.getopt("server|s", &isServer, "host|h", &host, "begin|b", &begin, "end|e", &end);
 
     if (isServer) {
-        listen(host);
+        listen(host, begin, end);
     } else {
-        check(host);
+        check(host, begin, end);
     }
 }
