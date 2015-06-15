@@ -1,0 +1,8 @@
+{
+	"name": "fwc",
+	"description": "A minimal D application.",
+	"copyright": "Copyright © 2015, u_yamada",
+	"authors": ["u_yamada"],
+	"dependencies": {
+	}
+}
