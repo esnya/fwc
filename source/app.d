@@ -5,7 +5,7 @@ import std.getopt;
 import std.parallelism;
 
 void check(string host, ushort begin = 1, ushort end = 1024) {
-    bool[1024] results;
+    bool[ushort] results;
     auto pool = new TaskPool(32); 
 
     foreach (ushort port; pool.parallel(iota!(ushort, ushort)(begin, end))) {
@@ -24,6 +24,7 @@ void check(string host, ushort begin = 1, ushort end = 1024) {
 
             socket.close();
         } catch (Throwable t) {
+            results[port] = false;
             writeln(host, ':', port, ": FAILED");
         }
     }
